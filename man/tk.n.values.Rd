@@ -17,4 +17,7 @@ tk.n.values(msg = "Enter Line Numbers from left to Right", n = 2)
 \description{
 Return n number of values entered using a tk dialog box
 }
+\author{
+Emmanuel Jjunju, \email{ejjunju@gmail.com}
+}
 

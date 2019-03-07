@@ -12,4 +12,7 @@ CheckInstallLoadPkgs(x)
 \description{
 Function to check and install pacakges
 }
+\author{
+Emmanuel Jjunju, \email{ejjunju@gmail.com}
+}
 

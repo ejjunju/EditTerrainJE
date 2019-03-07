@@ -2,7 +2,7 @@
 % Please edit documentation in R/EditTerrainJEFunctions.R
 \name{raster2x11}
 \alias{raster2x11}
-\title{Function to call x11 with H and Wbased on a raster}
+\title{Function to call x11 with H and W based on a raster's dimensions}
 \usage{
 raster2x11(r, H = 20, n = 1, xlim = NULL, ylim = NULL)
 }
@@ -14,6 +14,9 @@ raster2x11(r, H = 20, n = 1, xlim = NULL, ylim = NULL)
 \item{n}{number of widths}
 }
 \description{
-Function to call x11 with H and Wbased on a raster
+Function to call x11 with H and W based on a raster's dimensions
+}
+\author{
+Emmanuel Jjunju, \email{ejjunju@gmail.com}
 }
 

@@ -23,4 +23,7 @@ hills(r, xlim = NULL, ylim = NULL, main = "Terreng", legend = TRUE,
 \description{
 Plot terrain with hillsahde
 }
+\author{
+Emmanuel Jjunju, \email{ejjunju@gmail.com}
+}
 

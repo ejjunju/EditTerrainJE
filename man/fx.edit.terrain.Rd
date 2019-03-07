@@ -20,14 +20,15 @@ fx.edit.terrain(dem = "dem.tif", nlines = 4, zmanual = FALSE,
 \item{out.prefix}{a prefix for the output filenames}
 }
 \value{
-The sum of \code{x} and \code{y}.
-
-A list with elements: 1) Drawn interpolation lines \code {Guide.lines} and 2) bounding polygon \code {polys.df} and 3) Edited terrain model \code{dem}
+A list with elements: (1) Drawn interpolation lines and (2) bounding polygon polys.df and (3) Edited terrain model dem
 }
 \description{
 Function to edit a DEM(depends on other functions above)
 }
 \examples{
 fx.edit.terrain("dem.tif",nlines=4,zmanual=F,out.prefix="Result")
+}
+\author{
+Emmanuel Jjunju, \email{ejjunju@gmail.com}
 }
 

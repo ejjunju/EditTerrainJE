@@ -18,4 +18,7 @@ tk.2.values(msg = "Enter Start and End Elevations for current Line",
 \description{
 Return two values entered using a tk dialog box
 }
+\author{
+Emmanuel Jjunju, \email{ejjunju@gmail.com}
+}
 

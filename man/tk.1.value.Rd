@@ -18,4 +18,7 @@ tk.1.value(msg = "Enter number of Parallel Interpolation Lines (minimum 2)",
 \description{
 Return a value entered using a tk dialog box
 }
+\author{
+Emmanuel Jjunju, \email{ejjunju@gmail.com}
+}
 

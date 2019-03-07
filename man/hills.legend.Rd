@@ -18,4 +18,7 @@ hills.legend(r, xlim = NULL, ylim = NULL, brks = NA)
 \description{
 Plot a legend
 }
+\author{
+Emmanuel Jjunju, \email{ejjunju@gmail.com}
+}
 

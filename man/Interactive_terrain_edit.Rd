@@ -27,4 +27,7 @@ Decide whether to read elevations of start and endpoints of editing lines from t
 Call edit Terrain function
 Interactive_terrain_edit()
 }
+\author{
+Emmanuel Jjunju, \email{ejjunju@gmail.com}
+}
 

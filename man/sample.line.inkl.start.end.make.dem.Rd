@@ -28,4 +28,7 @@ Function for drawing points at a given interval along a line
 Find the elavtion of points by interpolating between the elevations of the start and endpoints if \code{interpZ==TRUE}
 Create a raster by interpolating the elevations
 }
+\author{
+Emmanuel Jjunju, \email{ejjunju@gmail.com}
+}
 

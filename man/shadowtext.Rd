@@ -23,4 +23,7 @@ shadowtext(x, y = NULL, labels, col = "white", bg = "black",
 \description{
 Function to add text with a halo/shadow
 }
+\author{
+Emmanuel Jjunju, \email{ejjunju@gmail.com}
+}
 
