@@ -1,8 +1,8 @@
 # #instructions to make package
 # install.packages("devtools")
-# library("devtools")
+# library("devtools")#......1
 # devtools::install_github("klutometis/roxygen")
-# library(roxygen2)
+# library(roxygen2)#......2
 # #Step 1: Create your package directory
 # setwd("C:/Users/noemma/Dropbox/DEV/R/SlopingLines2Raster")
 # create("EditTerrainJE")
@@ -19,11 +19,22 @@
 #install from github
 #devtools install_github()
 
+#connect with github
+#https://cfss.uchicago.edu/git05.html
+#https://github.com/ejjunju/EditTerrainJE
+#ejj-Bm311!
+
+#Rstudio Tools shell
+#git remote add origin https://github.com/ejjunju/EditTerrainJE
+#git pull origin master
+#git push -u origin master
+
 #Interactively edit terrain. Perform cuts and fills in terrain using lines with start and end elevations
-library(tcltk2)
+#library(tcltk2)
 #----------------------------------------------------------------------------------------------------------------------#
 #' Function to check and install pacakges
 #' @param x vector of packages to check and install
+#' @author Emmanuel Jjunju, \email{ejjunju@@gmail.com}
 #' @export
 CheckInstallLoadPkgs = Vectorize(function(x) {
   #Ensure antivirus doesnt stop mising package installation (included in #CheckInstallLoadPkgs)
@@ -40,6 +51,7 @@ CheckInstallLoadPkgs = Vectorize(function(x) {
 #' Function to create a SpatialPolygonsDataFrame from a matrix of xy coordinates
 #' @param pts matrix of x,y points
 #' @return SpatialPolygonsDataFrame from
+#' @author Emmanuel Jjunju, \email{ejjunju@@gmail.com}
 #' @export
 polygonFromXY<-function(pts=null,Raster=null,n=4,coord.sys="+proj=utm +zone=33 +ellps=WGS84 +datum=WGS84 +units=m +no_defs "){
   if(!is.null(Raster)){
@@ -65,6 +77,7 @@ polygonFromXY<-function(pts=null,Raster=null,n=4,coord.sys="+proj=utm +zone=33 +
 #' Function for drawing points at a given interval along a line
 #' @param x A SpatialLinesDataFrame (must have a projection in metres)
 #' @param sdist interval in metres
+#' @author Emmanuel Jjunju, \email{ejjunju@@gmail.com}
 #' @return \code{results} A SpatialPointsDataFrame
 #' @export
 sample.line <- function(x, sdist=100)
@@ -105,6 +118,7 @@ sample.line <- function(x, sdist=100)
 #' @param spdf A SpatialPolygonsData Frame (a bounding polygon for the interpolation )
 #' @param zmanual TRUE/FALSE decide whether to read the elevations from the raster (feks Excavation)or manually enter them (feks filling)
 #' @return \code{results} A SpatialPointsDataFrame
+#' @author Emmanuel Jjunju, \email{ejjunju@@gmail.com}
 #' @export
 sample.line.inkl.start.end.make.dem <- function(x,
                                                 sdist=1,
@@ -112,7 +126,7 @@ sample.line.inkl.start.end.make.dem <- function(x,
                                                 spdf, #mask polygon
                                                 zmanual=FALSE
 ){
-  Guide.lines<-x
+  Help.lines<-x
   #CheckInstallLoadPkgs(c("rgdal","raster","sp","tcltk2","akima","compiler"))
   #if (!require(sp)) stop("sp PACKAGE MISSING")
   if (!inherits(x, "SpatialLinesDataFrame")) stop("MUST BE SP SpatialLinesDataFrame OBJECT")
@@ -175,15 +189,19 @@ sample.line.inkl.start.end.make.dem <- function(x,
       Zi<-c(NA,NA)
 
       if(zmanual==TRUE){
-        print(showtxt<-paste("Enter End_point elevations for Line[",i,"] of",length(unique(Out$ID))))
+        print(showtxt<-paste("Enter Start and End elevation for Line[",i,"] of",length(unique(Out$ID))))
         #Zi<-scan(what = "numeric",n = 2)
-        Zi<-tk.2.values(showtxt)
+        Zi<-tk.2.values(showtxt,n=2)
+        print("Manual Elevations")
+        print(Zi)
       }else {
-        #print(Zi<-(Guide.lines@data[i,2:3]))
-        print(head(Guide.lines@data))
+        #print(Zi<-(Help.lines@data[i,2:3]))
+        print(head(Help.lines@data))
         #scan(n=1)
-        Zi[1]<-Guide.lines@data[i,2]
-        Zi[2]<-Guide.lines@data[i,3]
+        Zi[1]<-Help.lines@data[i,2]
+        Zi[2]<-Help.lines@data[i,3]
+        print("Terrain Elevations")
+        print(Zi)
       }
       #points(subdf$X[1],subdf$Y[1],pch=16,col="grey",cex=1)#start
       #points(subdf$X[nrow(subdf)],subdf$Y[nrow(subdf)],pch=16,col="grey",cex=1) #end
@@ -227,6 +245,7 @@ sample.line.inkl.start.end.make.dem <- function(x,
 #' @param  main Title
 #' @param legend FALSE/TRUE decide whether to plot a legend. Dont plot a legend if you plan to add more objects to the plot. They wont be plotted properly
 #' @param brks optionally provide breaks to decide the colorlevels
+#' @author Emmanuel Jjunju, \email{ejjunju@@gmail.com}
 #' @export
 hills<-function(r,xlim=NULL,ylim=NULL,main="Terreng",legend=TRUE,brks=NA){
   #CheckInstallLoadPkgs(c("rgdal","raster","sp","tcltk2","akima","compiler"))
@@ -241,7 +260,7 @@ hills<-function(r,xlim=NULL,ylim=NULL,main="Terreng",legend=TRUE,brks=NA){
     plot(hill, col=grey(0:100/100), legend=FALSE,xlim=xlim,ylim=ylim,main=main,cex.axis=0.5)
   }
 
-  if(is.na(brks)){
+  if(is.na(brks)[1]){
     rng<-range(getValues(r),na.rm=T)
     (brks<-seq(rng[1],rng[2],diff(rng)/32))
     (brks<-round(brks,2))
@@ -271,6 +290,7 @@ hills<-function(r,xlim=NULL,ylim=NULL,main="Terreng",legend=TRUE,brks=NA){
 #' @param r raster
 #' @param n Number of breaks (default is 32)
 #' @return brks The breaks
+#' @author Emmanuel Jjunju, \email{ejjunju@@gmail.com}
 #' @export
 fx.brks<-function(r,n=32){
   rng<-range(getValues(r),na.rm=T)
@@ -285,10 +305,11 @@ fx.brks<-function(r,n=32){
 #' @param xlim xlimits to plot
 #' @param ylim ylimits to plot
 #' @param  brks optionally provide breaks
+#' @author Emmanuel Jjunju, \email{ejjunju@@gmail.com}
 #' @export
 hills.legend<-function(r,xlim=NULL,ylim=NULL,brks=NA){
   #CheckInstallLoadPkgs(c("rgdal","raster","sp","tcltk2","akima","compiler"))
-  if(is.na(brks)){
+  if(is.na(brks)[1]){
     rng<-range(getValues(r),na.rm=T)
     (brks<-seq(rng[1],rng[2],diff(rng)/32))
     (brks<-round(brks,2))
@@ -319,6 +340,7 @@ hills.legend<-function(r,xlim=NULL,ylim=NULL,brks=NA){
 #' @param msg message
 #' @param varname Number of Lines to draw
 #' @return \code{x} a valuye entered
+#' @author Emmanuel Jjunju, \email{ejjunju@@gmail.com}
 #' @export
 tk.1.value <- function(msg="Enter number of Parallel Interpolation Lines (minimum 2)",varname="Number of Lines to Draw"){
   #CheckInstallLoadPkgs(c("rgdal","raster","sp","tcltk2","akima","compiler"))
@@ -357,6 +379,7 @@ tk.1.value <- function(msg="Enter number of Parallel Interpolation Lines (minimu
 #' @param msg message
 #' @param varname Number of Lines to draw
 #' @return \code{c(x,y)} values entered
+#' @author Emmanuel Jjunju, \email{ejjunju@@gmail.com}
 #' @export
 tk.2.values <- function(msg="Enter Start and End Elevations for current Line",varname=c("Start","end")){
   #CheckInstallLoadPkgs(c("rgdal","raster","sp","tcltk2","akima","compiler"))
@@ -378,7 +401,7 @@ tk.2.values <- function(msg="Enter Start and End Elevations for current Line",va
 
   submit <- function() {
     x <- as.numeric(tclvalue(xvar))
-    y <- as.numeric(tclvalue(xvar))
+    y <- as.numeric(tclvalue(yvar))
     e <- parent.env(environment())
     e$x <- x
     e$y <- y
@@ -400,6 +423,7 @@ tk.2.values <- function(msg="Enter Start and End Elevations for current Line",va
 #' @param msg message
 #' @param n Number of values to enter and return
 #' @return \code{out} values entered
+#' @author Emmanuel Jjunju, \email{ejjunju@@gmail.com}
 #' @export
 tk.n.values <- function(msg="Enter Line Numbers from left to Right",n=2){
   require(tcltk2)
@@ -456,10 +480,10 @@ tk.n.values <- function(msg="Enter Line Numbers from left to Right",n=2){
 #' @param nlines NUmber of editing lines to be drawn for cutting/filling terrain
 #' @param zmanual TRUE/FALSE determines whether elevations fro start end endpoints to the editing lines are enteered manually or read from the terrain
 #' @param out.prefix a prefix for the output filenames
-#' @return The sum of \code{x} and \code{y}.
-#' @return A list with elements: 1) Drawn interpolation lines \code {Guide.lines} and 2) bounding polygon \code {polys.df} and 3) Edited terrain model \code{dem}
+#' @return A list with elements: (1) Drawn interpolation lines and (2) bounding polygon polys.df and (3) Edited terrain model dem
 #' @examples
 #' fx.edit.terrain("dem.tif",nlines=4,zmanual=F,out.prefix="Result")
+#' @author Emmanuel Jjunju, \email{ejjunju@@gmail.com}
 #' @export
 fx.edit.terrain<-function(dem="dem.tif",
                           nlines=4,
@@ -559,15 +583,15 @@ fx.edit.terrain<-function(dem="dem.tif",
   for(i in 1:length(ll2)){
     ll3[[i]] = Lines(list(ll2[[i]]), ID=i)
   }
-  Guide.lines = SpatialLines(ll3,proj4string=CRS(coord.sys))
+  Help.lines = SpatialLines(ll3,proj4string=CRS(coord.sys))
   ldf <- data.frame(ID=1:nlines, zse)
-  Guide.lines <- SpatialLinesDataFrame(Guide.lines, data = ldf)
-  names(Guide.lines@data)<-c("ID","Zs","Ze")
+  Help.lines <- SpatialLinesDataFrame(Help.lines, data = ldf)
+  names(Help.lines@data)<-c("ID","Zs","Ze")
 
   #Create an envelope polygon
   print("Find the Start and endpoints to all the Guide -lines")
   print("-------------------------------------------------------------------------------------------------------------")
-  lxy<- lapply(slot(Guide.lines, "lines"),
+  lxy<- lapply(slot(Help.lines, "lines"),
                function(x) lapply(slot(x, "Lines"),
                                   function(y) slot(y, "coords"))) #Line vertices
   ab<-NA #startpoints
@@ -586,16 +610,16 @@ fx.edit.terrain<-function(dem="dem.tif",
   rownames(bc)<-c()
   starts<-data.frame(ab)
   ends<-data.frame(bc)
-  #cpts<-do.call("rbind",lapply(coordinates(Guide.lines),function(x) apply(x[[1]],2,mean)))
+  #cpts<-do.call("rbind",lapply(coordinates(Help.lines),function(x) apply(x[[1]],2,mean)))
 
-  #plot(Guide.lines,add=T,col="white",asp=1,lwd=2,lty=3)
+  #plot(Help.lines,add=T,col="white",asp=1,lwd=2,lty=3)
   #points(x=starts[,1],y=starts[,2],cex=2,pch=2,col="lightblue")
   shadowtext(x=starts[,1],y=starts[,2],
-             labels=1:length(Guide.lines),
+             labels=1:length(Help.lines),
              cex=0.8,
              adj=0,font=2,col="white",pos=3)
   # shadowtext(x=ends[,1],y=ends[,2],
-  #      labels=paste("E",1:length(Guide.lines)),
+  #      labels=paste("E",1:length(Help.lines)),
   #      cex=0.8,
   #      adj=0,font=2,col="red",pos=3)
 
@@ -616,7 +640,7 @@ fx.edit.terrain<-function(dem="dem.tif",
   #   \nNorth_South? (yes)
   #   \nor \nEast-West? (no)
   #   \nor \nManual Soting (cancel)",
-  #   icon = "question", type = "yesnocancel", default = "yes")
+  #   icon = "question", type = "yesno", default = "yes")
   #
   # if(as.character(sortNS)=="yes"){
   #   Sort<-startpts[order(startpts$y),] #sort south to north
@@ -664,15 +688,15 @@ fx.edit.terrain<-function(dem="dem.tif",
 
   #Points along lines with elevbations interpreted between start and end
   #Run sample function and display results
-  # Out<- sample.line(Guide.lines, sdist=0.5)
-  # plot(Guide.lines, col = c("red", "blue"),axes=T)
+  # Out<- sample.line(Help.lines, sdist=0.5)
+  # plot(Help.lines, col = c("red", "blue"),axes=T)
   # plot(Out, pch=20, add=TRUE)
   sdist<-res(r)[1]
   print("Manual Entry of Elevations?")
   print(zmanual)
   print("Interpolating points along lines and creating a dem")
   print("-------------------------------------------------------------------------------------------------------------")
-  Out<- sample.line.inkl.start.end.make.dem (x = Guide.lines,
+  Out<- sample.line.inkl.start.end.make.dem (x = Help.lines,
                                              sdist=sdist,
                                              spdf=polys.df,
                                              interp.z = TRUE,
@@ -702,7 +726,7 @@ fx.edit.terrain<-function(dem="dem.tif",
   hills(r2,xlim=xlim,ylim=ylim,main=paste("",out.prefix,".tif",sep=""),legend = F,brks=brks)
   if(plot.shapes==TRUE){
     plot(polys.df,add=T,border="transparent",col=rgb(0.55,0.55,0.55,alpha = 0.3))
-    #plot(Guide.lines,add=T,col="white",asp=1,lwd=2,lty=3)
+    #plot(Help.lines,add=T,col="white",asp=1,lwd=2,lty=3)
   }
   hills.legend(r2,xlim=xlim,ylim=ylim,brks=brks)
 
@@ -713,13 +737,13 @@ fx.edit.terrain<-function(dem="dem.tif",
   print("Saving files")
   print("-------------------------------------------------------------------------------------------------------------")
   print(dsnf<-paste(getwd(),"Result",sep="/"))
-  writeOGR(Guide.lines,dsn = dsnf,layer = "EditingLines",driver = "ESRI Shapefile",overwrite_layer = TRUE)
+  writeOGR(Help.lines,dsn = dsnf,layer = "EditingLines",driver = "ESRI Shapefile",overwrite_layer = TRUE)
   writeOGR(polys.df,dsn = dsnf,layer = "EditedExtentPolygon",driver = "ESRI Shapefile",overwrite_layer = TRUE)
   print(out.prefix)
   print(rasout<-paste(dsnf,"/",out.prefix,".tif",sep=""))
   writeRaster(r2,rasout,overwrite=TRUE,format="GTiff",NAflag=-9999)
   #Sys.sleep(5)
-  out<-list(Guide.lines,Mask=polys.df,dem=r2)
+  out<-list(Help.lines,Mask=polys.df,dem=r2)
   return(out)
 }
 
@@ -734,6 +758,7 @@ fx.edit.terrain<-function(dem="dem.tif",
 #' Decide whether to read elevations of start and endpoints of editing lines from terrain or enter them manually
 #' Call edit Terrain function
 #' Interactive_terrain_edit()
+#' @author Emmanuel Jjunju, \email{ejjunju@@gmail.com}
 #' @export
 Interactive_terrain_edit<-function(){
   #WORKING DIRECTORIES
@@ -800,6 +825,7 @@ Interactive_terrain_edit<-function(){
                                      filters = Filters,
                                      index = 1))
       #Sys.sleep(5)
+      if(length(shplist)==1){shplist<-rbind(shplist,shplist)}
       (brkpaths<-do.call(rbind, strsplit(shplist,"/")))
       (brkpaths<-brkpaths[,-ncol(brkpaths)])
       (adsn<-apply(brkpaths,1,function(x) paste(x,collapse="/")))
@@ -816,7 +842,9 @@ Interactive_terrain_edit<-function(){
         for(osi in 1:length(other.shps)){
           print(paste("Reading:",shplist[osi]))
           print("---------------------------------------------------------------------")
-          other.shps[[osi]]<-readOGR(adsn[osi],shplist[osi]) #Read
+          rdshp<-readOGR(adsn[osi],shplist[osi]) #Read
+          if(is.na(proj4string(rdshp))){proj4string(rdshp)<-coord.sys} #project same as raster if no projection
+          other.shps[[osi]]<-rdshp
           names(other.shps)[osi]<-shplist[osi]
           other.shps[[osi]]<-spTransform(other.shps[[osi]],coord.sys) #reproject
         }
@@ -931,6 +959,7 @@ Interactive_terrain_edit<-function(){
 #' @param col label foreground colour
 #' @param bg lable halo/shadow color
 #' @param theta theta controls appearance of shadow
+#' @author Emmanuel Jjunju, \email{ejjunju@@gmail.com}
 #' @export
 shadowtext <- function(x, y=NULL, labels, col='white', bg='black',
                        theta= seq(0, 2*pi, length.out=50), r=0.1, ... ) {
@@ -948,10 +977,11 @@ shadowtext <- function(x, y=NULL, labels, col='white', bg='black',
 }
 #----------------------------------------------------------------------------------------------------------------------#
 
-#' Function to call x11 with H and Wbased on a raster
+#' Function to call x11 with H and W based on a raster's dimensions
 #' @param r raster
 #' @param H height
 #' @param n number of widths
+#' @author Emmanuel Jjunju, \email{ejjunju@@gmail.com}
 #' @export
 raster2x11<-function(r,H=20,n=1,xlim=NULL,ylim=NULL){
 
@@ -966,84 +996,104 @@ raster2x11<-function(r,H=20,n=1,xlim=NULL,ylim=NULL){
 
 
 #' USER INTERFACE
+#' @author Emmanuel Jjunju, \email{ejjunju@@gmail.com}
 #' @export
 ui<-function(){
   rm(list=ls())
   graphics.off()
-  #x11(20,14)
-  library(tcltk2)
-  #Only run if using rstudio to start in script directory
-  yesno<-tkmessageBox(message = "Are you using Rstudio GUI?",
-                      icon = "question", type = "yesnocancel", default = "yes")
-  if(as.character(yesno)=="yes"){
-    trace(utils:::unpackPkgZip, quote(Sys.sleep(5)),at = which(grepl("Sys.sleep", body(utils:::unpackPkgZip), fixed = TRUE)))
-    if(!require(rstudioapi))install.packages("rstudioapi")
-    require(rstudioapi)
-    scriptdir<-dirname(rstudioapi::getSourceEditorContext()$path)
-    setwd(scriptdir)
-    print(getwd())
+  #Run Interactive edit
+  Interactive_terrain_edit()
+}
+
+
+#' Draw an elevation profile line on a raster
+#' @param r raster
+#' @return table of elevations
+fx.click.profile<-function(r){
+  require(raster)
+  #create a line
+    ll<-vector("list",length=1)
+    p1<-click(r,n=100,xy=TRUE)
+
+    l1<-as.matrix(p1[,1:2])
+    lines(p1$x,p1$y,pch=16,lty=1,col=rgb(1,0,0,alpha=0.5),lwd=3) #red lines that are from clicking
+    ll[[1]]<-l1
+  #Create a polyline shapefile from the extracted xyz point vertices ###
+  ll2<-lapply(ll,Line)
+  names(ll2)<-1:length(ll2)
+  ll3<-vector("list",length = 1)
+  for(i in 1:length(ll2)){
+    ll3[[i]] = Lines(list(ll2[[i]]), ID=i)
   }
-  #CHECK INSTALL LOAD DEPENDNCIES
-  CheckInstallLoadPkgs = Vectorize(function(x) {
-    #Ensure antivirus doesnt stop mising package installation (included in CheckInstallLoadPkgs)
-    #interactive alternative #trace(utils:::unpackPkgZip, edit=TRUE)
-    trace(utils:::unpackPkgZip, quote(Sys.sleep(5)),at = which(grepl("Sys.sleep", body(utils:::unpackPkgZip), fixed = TRUE)))
-    #check and install
-    stopifnot(is.character(x))
-    if(!is.element(x, rownames(installed.packages()))) install.packages(x,dependencies = TRUE)
-    #load
-    library(x, character.only = T, logical.return = T, quietly = T)
-  })
-  CheckInstallLoadPkgs(c("rgdal","raster","sp","tcltk2","akima","compiler")) #load/install required packages.
+  Help.lines = SpatialLines(ll3,proj4string=CRS(proj4string(r)))
+  ldf <- data.frame(ID=1)
+  Help.lines <- SpatialLinesDataFrame(Help.lines, data = ldf)
+  #r <- raster('dem.tif')
+  #lines <- readOGR(dsn='lines.shp', layer='lines')
+  elevations <- extract(r, Help.lines,cellnumbers=TRUE)
+  p1<-as.data.frame(xyFromCell(r,elevations[[1]][,1]))
+  p1$dx<-c(0,diff(p1$x))
+  p1$dy<-c(0,diff(p1$y))
+  p1$dL<-((p1$dx)^2+(p1$dy)^2)^0.5
+  p1$L<-c(cumsum(p1$dL))
+  p1$Z<-elevations[[1]][,2]
+  plot(p1$L,p1$Z,xlab="L(m)",ylab="moh",type="l")
+  return(p1)
+}
 
-  #CHECK if "EditTerrainJE" is installed then install and LOAD "EditTerrainJE" or Use Edit_Terrain_Functions.r###########
-  pkg<-require("EditTerrainJE")
-  if(pkg==FALSE){
-    yesno<-tkmessageBox(message = "Do you have the RScript file EditTerrainJEFunctions.R?",
-                        icon = "question", type = "yesnocancel", default = "yes")
-    if(as.character(yesno)=="yes"){
-      #Run using Rscript
-      fscript<-tk_choose.files(default = "",
-                               caption = "Select <<EditTerrainJEFunctions.R>>",
-                               multi = TRUE,
-                               filters = matrix(c("Rscript","r"),1,2),
-                               index = 1)
-      source(fscript)
-      #Run Interactive edit
-      Interactive_terrain_edit()
+#----------------------------------------------------------------------------------------------------------------------#
+#' Return n number of Elevation values entered using a tk dialog box
+#' @param msg message
+#' @param n Number of values to enter and return
+#' @return \code{out} values entered
+#' @author Emmanuel Jjunju, \email{ejjunju@@gmail.com}
+#' @export
+tk.n.elv <- function(msg="Enter Line Numbers from left to Right",n=2){
+  require(tcltk2)
+  varname<-paste("Elevation",1:n,sep="")
+  quotes<-""
+  #CheckInstallLoadPkgs(c("rgdal","raster","sp","tcltk2","akima","compiler"))
+  #xvar <- tclVar("")
+  xvar.txt<-paste("xvar",1:n,"<-tclVar(quotes)",sep="")
+  eval(parse(text=xvar.txt))
 
-    } else{
-      yesno<-tkmessageBox(message = "Do you want to  Install package EditTerrainJE (requires file EditTerrainJE.gz)?",
-                          icon = "question", type = "yesnocancel", default = "yes")
-      if(as.character(yesno)=="yes"){
-        yesno<-tkmessageBox(message = "Is rtools installed? https://cran.r-project.org/bin/windows/Rtools/",
-                            icon = "question", type = "yesnocancel", default = "yes")
-        if(as.character(yesno)=="yes"){
-          path_to_file<-tk_choose.files(caption = "Choose EditTerrainJE.zip",filters = matrix(c("zip","zip"),1,2))
-          install.packages(path_to_file, repos = NULL, type="source")
+  win1 <- tktoplevel()
+  tkwm.title(win1,"Line Order")
+  #x.entry <- tk2entry(win1, width = "25",textvariable=xvar)
+  x.entry.txt<-paste("x.entry",1:n," <- tk2entry(win1, width = as.character(25),textvariable=xvar",1:n,")",sep="")
+  eval(parse(text=x.entry.txt))
 
-          #Run using Just installed package
-          library("EditTerrainJE")
-          library(compiler)
-          enableJIT(3)
-          #Run Interactive edit
-          Interactive_terrain_edit()
-        } else {
-
-          tkmessageBox(message = "You need to install rtools from https://cran.r-project.org/bin/windows/Rtools/", icon = "info", type = "ok")
-        }
-
-      } else {
-        tkmessageBox(message = "You need to install pkg <<EditTerrainJE>> or use  <<EditTerrainJEFunctions.R>>.", icon = "info", type = "ok")
-      }
-    }
-  } else {
-    #Run using installed package
-    library("EditTerrainJE")
-    library(compiler)
-    enableJIT(3)
-    #Run Interactive edit
-    Interactive_terrain_edit()
+  reset <- function()
+  {
+    #tclvalue(xvar)<-""
+    txt<-paste("tclvalue(xvar,",1:n,")<-quotes",sep="")
+    eval(parse(text=txt))
   }
+
+  reset.but <- tkbutton(win1, text="Reset", command=reset)
+
+  submit <- function() {
+    #x <- as.numeric(tclvalue(xvar))
+    (txt1<-paste("x",1:n,"<- as.numeric(tclvalue(xvar",1:n,"))",sep=""))
+    eval(parse(text=txt1))
+    e <- parent.env(environment())
+    #e$x <- x
+    txt2<-paste("e$x",1:n," <- x",1:n,sep="")
+    eval(parse(text=txt2))
+    tkdestroy(win1)
+  }
+  submit.but <- tkbutton(win1, text="OK", command=submit)
+
+  tkgrid(tklabel(win1,text=msg),columnspan=2)
+  #tkgrid(tklabel(win1,text=varname[1]), x.entry, pady = 10, padx =10)
+  txt3<-paste("tkgrid(tklabel(win1,text=varname[",1:n,"]), x.entry",1:n,",pady = 10, padx =10)",sep="")
+  eval(parse(text=txt3))
+  tkgrid(submit.but, reset.but)
+
+  tkwait.window(win1)
+  txtout<-paste("out<-c(",paste(paste("x",1:n,sep=""),collapse=","),")",sep="")
+  (eval(parse(text=txtout)))
+  return(out)
 
 }
+
