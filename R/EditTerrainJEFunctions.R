@@ -1,4 +1,5 @@
 # #instructions to make package
+#http://kbroman.org/pkg_primer/pages/build.html
 # install.packages("devtools")
 # library("devtools")#......1
 # devtools::install_github("klutometis/roxygen")
@@ -11,6 +12,7 @@
 # #Step 4: Process your documentation
 # setwd("./EditTerrainJE")
 # document()
+# build() #create the .tar.gz file.
 # #Step 5: Install!
 # setwd("..")
 # install("EditTerrainJE")
