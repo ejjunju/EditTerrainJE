@@ -6,6 +6,9 @@
 \usage{
 ui()
 }
+\arguments{
+\item{OutPrefix}{prefix to output filename. Also used as output foldername}
+}
 \description{
 USER INTERFACE
 }

@@ -13,7 +13,10 @@ Decide whether to read elevations of start and endpoints of editing lines from t
 Call edit Terrain function
 Interactive_terrain_edit()}
 \usage{
-Interactive_terrain_edit()
+Interactive_terrain_edit(OutPrefix = "Result")
+}
+\arguments{
+\item{OutPrefix}{prefix to output filename. Also used as output foldername}
 }
 \description{
 Select Working Directory

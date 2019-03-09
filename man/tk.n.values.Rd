@@ -2,7 +2,7 @@
 % Please edit documentation in R/EditTerrainJEFunctions.R
 \name{tk.n.values}
 \alias{tk.n.values}
-\title{Return n number of values entered using a tk dialog box}
+\title{Return n number of numeric values entered using a tk dialog box}
 \usage{
 tk.n.values(msg = "Enter Line Numbers from left to Right", n = 2)
 }
@@ -15,7 +15,7 @@ tk.n.values(msg = "Enter Line Numbers from left to Right", n = 2)
 \code{out} values entered
 }
 \description{
-Return n number of values entered using a tk dialog box
+Return n number of numeric values entered using a tk dialog box
 }
 \author{
 Emmanuel Jjunju, \email{ejjunju@gmail.com}

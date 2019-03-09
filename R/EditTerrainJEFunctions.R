@@ -128,7 +128,7 @@ sample.line.inkl.start.end.make.dem <- function(x,
                                                 spdf, #mask polygon
                                                 zmanual=FALSE
 ){
-  Help.lines<-x
+  EditingLines<-x
   #CheckInstallLoadPkgs(c("rgdal","raster","sp","tcltk2","akima","compiler"))
   #if (!require(sp)) stop("sp PACKAGE MISSING")
   if (!inherits(x, "SpatialLinesDataFrame")) stop("MUST BE SP SpatialLinesDataFrame OBJECT")
@@ -175,8 +175,8 @@ sample.line.inkl.start.end.make.dem <- function(x,
     #interpolate elevations long lines
     if(interp.z==TRUE){
 
-      plot(x,axes=TRUE,add=TRUE)
-      plot(x[i,],col="red",add=TRUE)
+      plot(x,axes=TRUE,add=TRUE,col="red")
+      plot(x[i,],col="white",lwd=2,add=TRUE)
       #points(Out@data$X,Out@data$Y,pch=16,col="grey",cex=0.5)
       points(subdf$X[1],subdf$Y[1],pch=16,col="blue",cex=1)
       points(subdf$X[nrow(subdf)],subdf$Y[nrow(subdf)],pch=16,col="red",cex=1)
@@ -186,22 +186,22 @@ sample.line.inkl.start.end.make.dem <- function(x,
       #      cex=1,
       #      adj=0,font=2,col="black",pos=2)
       #
-      legend("topright",col=c("blue","red"),pch=c(16,16),cex=c(1,1),legend = c("Start","End"))
+      legend("top",col=c("blue","red"),pch=c(16,16),cex=c(1,1),legend = c("Start","End"),horiz=TRUE)
       print(Li<-range(dist))
       Zi<-c(NA,NA)
 
       if(zmanual==TRUE){
         print(showtxt<-paste("Enter Start and End elevation for Line[",i,"] of",length(unique(Out$ID))))
         #Zi<-scan(what = "numeric",n = 2)
-        Zi<-tk.2.values(showtxt,n=2)
+        Zi<-tk.2.values(showtxt)
         print("Manual Elevations")
         print(Zi)
       }else {
-        #print(Zi<-(Help.lines@data[i,2:3]))
-        print(head(Help.lines@data))
+        #print(Zi<-(EditingLines@data[i,2:3]))
+        print(head(EditingLines@data))
         #scan(n=1)
-        Zi[1]<-Help.lines@data[i,2]
-        Zi[2]<-Help.lines@data[i,3]
+        Zi[1]<-EditingLines@data[i,2]
+        Zi[2]<-EditingLines@data[i,3]
         print("Terrain Elevations")
         print(Zi)
       }
@@ -337,7 +337,7 @@ hills.legend<-function(r,xlim=NULL,ylim=NULL,brks=NA){
 }
 
 #----------------------------------------------------------------------------------------------------------------------#
-#get a value for tk dialog box
+#get a numeric value for tk dialog box
 #' Return a value entered using a tk dialog box
 #' @param msg message
 #' @param varname Number of Lines to draw
@@ -375,9 +375,46 @@ tk.1.value <- function(msg="Enter number of Parallel Interpolation Lines (minimu
   return(c(x))
 }
 
+#get a character string  value for tk dialog box
+#' Return a value entered using a tk dialog box
+#' @param msg message
+#' @param varname Number of Lines to draw
+#' @return \code{x} a valuye entered
+#' @author Emmanuel Jjunju, \email{ejjunju@@gmail.com}
+#' @export
+tk.1.string <- function(msg="Output Prefix",varname="OutPrefix"){
+  #CheckInstallLoadPkgs(c("rgdal","raster","sp","tcltk2","akima","compiler"))
+  xvar <- tclVar("Result")
+
+  win1 <- tktoplevel()
+  tkwm.title(win1,varname)
+  x.entry <- tk2entry(win1, width = "25",textvariable=xvar)
+
+  reset <- function()
+  {
+    tclvalue(xvar)<-""
+  }
+
+  reset.but <- tkbutton(win1, text="Reset", command=reset)
+
+  submit <- function() {
+    x <- as.character(tclvalue(xvar))
+    e <- parent.env(environment())
+    e$x <- x
+    tkdestroy(win1)
+  }
+  submit.but <- tkbutton(win1, text="OK", command=submit)
+
+  tkgrid(tklabel(win1,text=msg),columnspan=2)
+  tkgrid(tklabel(win1,text=varname), x.entry, pady = 10, padx =10)
+  tkgrid(submit.but, reset.but)
+
+  tkwait.window(win1)
+  return(c(x))
+}
 #----------------------------------------------------------------------------------------------------------------------#
 #get a value for tk dialog box
-#' Return two values entered using a tk dialog box
+#' Return two numeric values entered using a tk dialog box
 #' @param msg message
 #' @param varname Number of Lines to draw
 #' @return \code{c(x,y)} values entered
@@ -421,7 +458,7 @@ tk.2.values <- function(msg="Enter Start and End Elevations for current Line",va
 }
 
 #----------------------------------------------------------------------------------------------------------------------#
-#' Return n number of values entered using a tk dialog box
+#' Return n number of numeric values entered using a tk dialog box
 #' @param msg message
 #' @param n Number of values to enter and return
 #' @return \code{out} values entered
@@ -481,16 +518,16 @@ tk.n.values <- function(msg="Enter Line Numbers from left to Right",n=2){
 #' @param dem Path to a raster withe levation data (tif).
 #' @param nlines NUmber of editing lines to be drawn for cutting/filling terrain
 #' @param zmanual TRUE/FALSE determines whether elevations fro start end endpoints to the editing lines are enteered manually or read from the terrain
-#' @param out.prefix a prefix for the output filenames
+#' @param OutPrefix a prefix for the output filenames
 #' @return A list with elements: (1) Drawn interpolation lines and (2) bounding polygon polys.df and (3) Edited terrain model dem
 #' @examples
-#' fx.edit.terrain("dem.tif",nlines=4,zmanual=F,out.prefix="Result")
+#' fx.edit.terrain("dem.tif",nlines=4,zmanual=F,OutPrefix="Result")
 #' @author Emmanuel Jjunju, \email{ejjunju@@gmail.com}
 #' @export
 fx.edit.terrain<-function(dem="dem.tif",
                           nlines=4,
                           zmanual=FALSE,
-                          out.prefix="Result",
+                          OutPrefix="Result",
                           coord.sys="+proj=utm +zone=32 +ellps=GRS80 +units=m +no_defs",
                           plot.shapes=FALSE,
                           male.pts=NULL,
@@ -528,13 +565,18 @@ fx.edit.terrain<-function(dem="dem.tif",
   # }
   if(!is.null(male.pts)){
     print("Plotting reference Points with Point_Z")
-    points(male.pts,cex=1,pch=16)
-    kmp<-coordinates(male.pts)
-    shadowtext(x=kmp[,1],y=kmp[,2],
+    if(class(male.pts)=="SpatialPointsDataFrame"){
+      points(male.pts,cex=1,pch=16)
+      kmp<-coordinates(male.pts)
+      if(is.null(male.pts@data$POINT_Z)){print("Warning: POINT_Z attribute missing")} else {
+      shadowtext(x=kmp[,1],y=kmp[,2],
                labels=round(male.pts@data$POINT_Z,2),
                cex=0.8,
                adj=0,font=2,col="white",pos=3)
-
+      }
+      } else {
+                 print("Warning: No points provided")
+               }
   }
   if(!is.null(other.shps)){
     shplist<-names(other.shps)
@@ -562,20 +604,25 @@ fx.edit.terrain<-function(dem="dem.tif",
   #use extract to draw line xyz vertices  where the terrain editing is required
   print("Create Interpolation Guide Lines by clicking on the plot the click FINISH when done")
   print("-------------------------------------------------------------------------------------------------------------")
-  tkmessageBox(message = "Create Cut or Fill Line by clicking\n (maks 100 clicks per line)", icon = "info", type = "ok")
-  library("sp")
+  #tkmessageBox(message = "Create Cut or Fill Line by clicking\n (maks 100 clicks per line)", icon = "info", type = "ok")
+  CheckInstallLoadPkgs("sp")
   ll<-vector("list",length = nlines)
   zse<-array(dim=c(nlines,2)) #start end elevations
   for(i in 1:nlines){
+    if(i==1){print(tkmessageBox(message = paste("Create Editing Lines\nClick to create vertices (Max 100/Line)\nFirst Line ",min(i,nlines),"/",nlines),
+                                    icon = "info", type = "ok"))}
     p1<-click(r,n=100,xy=TRUE)
     l1<-as.matrix(p1[,-3])
     lines(p1$x,p1$y,pch=16,lty=1,col=rgb(1,0,0,alpha=0.5),lwd=3) #red lines that are from clicking
     ll[[i]]<-l1
     zse[i,1]<-p1[1,3]
     zse[i,2]<-p1[nrow(p1),3]
-    if(i<nlines){print(tkmessageBox(message = paste("Next Line ",min(i+1,nlines),"/",nlines),
-                                    icon = "info", type = "ok"))} else{print("Done !!")}
-  }
+    if(i<nlines){
+      print(tkmessageBox(message = paste("Next Line ",min(i+1,nlines),"/",nlines),icon = "info", type = "ok"))
+      } else{
+        if(i==nlines){tkmessageBox(message = paste("Lines Created ",min(i+1,nlines),"/",nlines),icon = "info", type = "ok")}
+      }
+    }
   zse<-as.data.frame(zse)
   names(zse)<-c("Zs","Ze")
   #Creette a polyline shapefile from the extracted xyz point vertices ###
@@ -585,17 +632,22 @@ fx.edit.terrain<-function(dem="dem.tif",
   for(i in 1:length(ll2)){
     ll3[[i]] = Lines(list(ll2[[i]]), ID=i)
   }
-  Help.lines = SpatialLines(ll3,proj4string=CRS(coord.sys))
+  EditingLines = SpatialLines(ll3,proj4string=CRS(coord.sys))
   ldf <- data.frame(ID=1:nlines, zse)
-  Help.lines <- SpatialLinesDataFrame(Help.lines, data = ldf)
-  names(Help.lines@data)<-c("ID","Zs","Ze")
+  EditingLines <- SpatialLinesDataFrame(EditingLines, data = ldf)
+  names(EditingLines@data)<-c("ID","Zs","Ze")
 
   #Create an envelope polygon
   print("Find the Start and endpoints to all the Guide -lines")
   print("-------------------------------------------------------------------------------------------------------------")
-  lxy<- lapply(slot(Help.lines, "lines"),
+  lxy<- lapply(slot(EditingLines, "lines"),
                function(x) lapply(slot(x, "Lines"),
                                   function(y) slot(y, "coords"))) #Line vertices
+
+  #(Midvert<-do.call("rbind",lapply(lapply(lxy, function(x) x[[1]]),function(x) x[ceiling(nrow(x)/2),])))
+  CheckInstallLoadPkgs("maptools")
+  (MidPts<-coordinates(SpatialLinesMidPoints(EditingLines)))
+
   ab<-NA #startpoints
   bc<-NA #end points
   for(k in 1:length(lxy)){
@@ -612,16 +664,16 @@ fx.edit.terrain<-function(dem="dem.tif",
   rownames(bc)<-c()
   starts<-data.frame(ab)
   ends<-data.frame(bc)
-  #cpts<-do.call("rbind",lapply(coordinates(Help.lines),function(x) apply(x[[1]],2,mean)))
+  #cpts<-do.call("rbind",lapply(coordinates(EditingLines),function(x) apply(x[[1]],2,mean)))
 
-  #plot(Help.lines,add=T,col="white",asp=1,lwd=2,lty=3)
+  #plot(EditingLines,add=T,col="white",asp=1,lwd=2,lty=3)
   #points(x=starts[,1],y=starts[,2],cex=2,pch=2,col="lightblue")
-  shadowtext(x=starts[,1],y=starts[,2],
-             labels=1:length(Help.lines),
-             cex=0.8,
-             adj=0,font=2,col="white",pos=3)
+  shadowtext(x=MidPts[,1],y=MidPts[,2],
+             labels=1:length(EditingLines),
+             cex=1,
+             adj=0,font=2,col="red",bg="white",pos=3)
   # shadowtext(x=ends[,1],y=ends[,2],
-  #      labels=paste("E",1:length(Help.lines)),
+  #      labels=paste("E",1:length(EditingLines)),
   #      cex=0.8,
   #      adj=0,font=2,col="red",pos=3)
 
@@ -655,7 +707,9 @@ fx.edit.terrain<-function(dem="dem.tif",
 
   #if(as.character(sortNS)=="cancel") {
   #tkmessageBox(message = "Enter Line Numbers at Start end From Left->Right", icon = "info", type = "ok")
-  orderi<-tk.n.values(msg="Enter Line Numbers at Start endpoints \nFrom \nLeft->Right \nOR \nRight->Left " ,n=nrow(startpts))
+  if(nrow(startpts)>2){ #Sort order if more than 2 lines are drawn
+    orderi<-tk.n.values(msg="Enter Line Numbers at Start endpoints \nFrom \nLeft->Right \nOR \nRight->Left " ,n=nrow(startpts))
+    } else {orderi<-1:2}
   Sort<-startpts[orderi,]#sort west to eat
   pi<-Sort[1,1:2]
   #}
@@ -690,15 +744,15 @@ fx.edit.terrain<-function(dem="dem.tif",
 
   #Points along lines with elevbations interpreted between start and end
   #Run sample function and display results
-  # Out<- sample.line(Help.lines, sdist=0.5)
-  # plot(Help.lines, col = c("red", "blue"),axes=T)
+  # Out<- sample.line(EditingLines, sdist=0.5)
+  # plot(EditingLines, col = c("red", "blue"),axes=T)
   # plot(Out, pch=20, add=TRUE)
   sdist<-res(r)[1]
   print("Manual Entry of Elevations?")
   print(zmanual)
   print("Interpolating points along lines and creating a dem")
   print("-------------------------------------------------------------------------------------------------------------")
-  Out<- sample.line.inkl.start.end.make.dem (x = Help.lines,
+  Out<- sample.line.inkl.start.end.make.dem (x = EditingLines,
                                              sdist=sdist,
                                              spdf=polys.df,
                                              interp.z = TRUE,
@@ -725,10 +779,10 @@ fx.edit.terrain<-function(dem="dem.tif",
   demf<-unlist(strsplit(dem,"/"));demf<-demf[length(demf)]#name of original raster in result folder
   brks<-fx.brks(r2)
   hills(r,xlim=xlim,ylim=ylim,main=paste( "",demf,sep=""),legend = F,brks=brks)
-  hills(r2,xlim=xlim,ylim=ylim,main=paste("",out.prefix,".tif",sep=""),legend = F,brks=brks)
+  hills(r2,xlim=xlim,ylim=ylim,main=paste("",OutPrefix,".tif",sep=""),legend = F,brks=brks)
   if(plot.shapes==TRUE){
     plot(polys.df,add=T,border="transparent",col=rgb(0.55,0.55,0.55,alpha = 0.3))
-    #plot(Help.lines,add=T,col="white",asp=1,lwd=2,lty=3)
+    #plot(EditingLines,add=T,col="white",asp=1,lwd=2,lty=3)
   }
   hills.legend(r2,xlim=xlim,ylim=ylim,brks=brks)
 
@@ -738,14 +792,16 @@ fx.edit.terrain<-function(dem="dem.tif",
   #also write them to file
   print("Saving files")
   print("-------------------------------------------------------------------------------------------------------------")
-  print(dsnf<-paste(getwd(),"Result",sep="/"))
-  writeOGR(Help.lines,dsn = dsnf,layer = "EditingLines",driver = "ESRI Shapefile",overwrite_layer = TRUE)
-  writeOGR(polys.df,dsn = dsnf,layer = "EditedExtentPolygon",driver = "ESRI Shapefile",overwrite_layer = TRUE)
-  print(out.prefix)
-  print(rasout<-paste(dsnf,"/",out.prefix,".tif",sep=""))
+  print(dsnf<-paste(getwd(),OutPrefix,sep="/"))
+  print("Saving Files to")
+  print(dsnf)
+  writeOGR(EditingLines,dsn = dsnf,layer = paste(OutPrefix,"_EditingLines"),driver = "ESRI Shapefile",overwrite_layer = TRUE)
+  writeOGR(polys.df,dsn = dsnf,layer = paste(OutPrefix,"_EditedExtentPolygon"),driver = "ESRI Shapefile",overwrite_layer = TRUE)
+  print(OutPrefix)
+  print(rasout<-paste(dsnf,"/",OutPrefix,"_",demf,".tif",sep=""))
   writeRaster(r2,rasout,overwrite=TRUE,format="GTiff",NAflag=-9999)
   #Sys.sleep(5)
-  out<-list(Help.lines,Mask=polys.df,dem=r2)
+  out<-list(EditingLines,Mask=polys.df,dem=r2)
   return(out)
 }
 
@@ -761,15 +817,20 @@ fx.edit.terrain<-function(dem="dem.tif",
 #' Call edit Terrain function
 #' Interactive_terrain_edit()
 #' @author Emmanuel Jjunju, \email{ejjunju@@gmail.com}
+#' @param OutPrefix prefix to output filename. Also used as output foldername
 #' @export
-Interactive_terrain_edit<-function(){
+Interactive_terrain_edit<-function(OutPrefix="Result"){
   #WORKING DIRECTORIES
   library(tcltk2)
+
   wd<-tk_choose.dir(default = getwd(), caption = "Select Working directory")
   setwd(wd)
-  resultfolder<-paste(wd,"/Result",sep="")
+  resultfolder<-paste(wd,"/",OutPrefix,sep="")
+  print("RESULTS ARE IN FOLDER")
+  print(OutPrefix)
+  print(resultfolder)
   if(!exists(resultfolder)){dir.create(resultfolder)}
-  #EXPLORE RASTER#################
+  #EXPLORE RASTER
   {
     print("Reading and processing terrain")
     library(raster)
@@ -785,8 +846,8 @@ Interactive_terrain_edit<-function(){
     #output name
     fdemCopy<-unlist(strsplit(fdem,"/"))
     fdemCopy<-fdemCopy[length(fdemCopy)]
-    fdemOut<-paste("Result_",fdemCopy,sep="")
-    fdemCopy<-paste("Result/",fdemCopy,sep="")
+    fdemOut<-paste(OutPrefix,"_",fdemCopy,sep="")
+    fdemCopy<-paste(OutPrefix,"/",fdemCopy,sep="")
 
 
   }
@@ -818,7 +879,7 @@ Interactive_terrain_edit<-function(){
     } else {male.pts<-NULL}
 
     #Other Shapefiles to plot
-    yesno<-tkmessageBox(message = "Other Shapefiles to plot?",
+    yesno<-tkmessageBox(message = "Other help-shapefiles to plot?",
                         icon = "question", type = "yesno", default = "yes")
     if(as.character(yesno)=="yes"){
       print(shplist<-tk_choose.files(default = "",
@@ -916,8 +977,8 @@ Interactive_terrain_edit<-function(){
     yesno<-tkmessageBox(message = paste("Lines=",nlines,"\nGet End-Point Elevations from Terrain?"),
                         icon = "question", type = "yesno", default = "yes")
     if(as.character(yesno)=="yes"){zmanual=FALSE} else {zmanual=TRUE}
-    out.prefix=unlist(strsplit(fdemOut,".tif"));
-    print(out.prefix)#;scan(n=1)
+    OutPrefix2=unlist(strsplit(fdemOut,".tif"));
+    print(OutPrefix)#;scan(n=1)
     coord.sys=coord.sys;
     plot.shapes=FALSE;
     male.pts=male.pts;
@@ -929,7 +990,7 @@ Interactive_terrain_edit<-function(){
     Ret<-fx.edit.terrain(dem,
                          nlines,
                          zmanual,
-                         out.prefix,
+                         OutPrefix,
                          coord.sys,
                          plot.shapes,
                          male.pts,
@@ -948,7 +1009,7 @@ Interactive_terrain_edit<-function(){
     par(mfrow=c(1,2))
     hills(r,main=paste( "",demf,sep=""),legend = F,brks=brks)
     hills.legend(Ret$dem)
-    hills(Ret$dem,main=paste("",out.prefix,".tif",sep=""),legend = F,,brks=brks)
+    hills(Ret$dem,main=paste("",OutPrefix2,".tif",sep=""),legend = F,brks=brks)
     hills.legend(Ret$dem,brks=brks)
   }
 }
@@ -999,12 +1060,14 @@ raster2x11<-function(r,H=20,n=1,xlim=NULL,ylim=NULL){
 
 #' USER INTERFACE
 #' @author Emmanuel Jjunju, \email{ejjunju@@gmail.com}
+#' @param OutPrefix prefix to output filename. Also used as output foldername
 #' @export
 ui<-function(){
-  rm(list=ls())
+  #rm(list=ls(),envir = .GlobalEnv )
   graphics.off()
+  OutPrefix<-tk.1.string("Name of Output sub-directory\n[Also used as prefix for output filename]")
   #Run Interactive edit
-  Interactive_terrain_edit()
+  Interactive_terrain_edit(OutPrefix)
 }
 
 
@@ -1027,12 +1090,12 @@ fx.click.profile<-function(r){
   for(i in 1:length(ll2)){
     ll3[[i]] = Lines(list(ll2[[i]]), ID=i)
   }
-  Help.lines = SpatialLines(ll3,proj4string=CRS(proj4string(r)))
+  EditingLines = SpatialLines(ll3,proj4string=CRS(proj4string(r)))
   ldf <- data.frame(ID=1)
-  Help.lines <- SpatialLinesDataFrame(Help.lines, data = ldf)
+  EditingLines <- SpatialLinesDataFrame(EditingLines, data = ldf)
   #r <- raster('dem.tif')
   #lines <- readOGR(dsn='lines.shp', layer='lines')
-  elevations <- extract(r, Help.lines,cellnumbers=TRUE)
+  elevations <- extract(r, EditingLines,cellnumbers=TRUE)
   p1<-as.data.frame(xyFromCell(r,elevations[[1]][,1]))
   p1$dx<-c(0,diff(p1$x))
   p1$dy<-c(0,diff(p1$y))

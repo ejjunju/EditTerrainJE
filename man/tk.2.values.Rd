@@ -2,7 +2,7 @@
 % Please edit documentation in R/EditTerrainJEFunctions.R
 \name{tk.2.values}
 \alias{tk.2.values}
-\title{Return two values entered using a tk dialog box}
+\title{Return two numeric values entered using a tk dialog box}
 \usage{
 tk.2.values(msg = "Enter Start and End Elevations for current Line",
   varname = c("Start", "end"))
@@ -16,7 +16,7 @@ tk.2.values(msg = "Enter Start and End Elevations for current Line",
 \code{c(x,y)} values entered
 }
 \description{
-Return two values entered using a tk dialog box
+Return two numeric values entered using a tk dialog box
 }
 \author{
 Emmanuel Jjunju, \email{ejjunju@gmail.com}

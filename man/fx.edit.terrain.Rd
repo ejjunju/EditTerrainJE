@@ -5,7 +5,7 @@
 \title{Function to edit a DEM(depends on other functions above)}
 \usage{
 fx.edit.terrain(dem = "dem.tif", nlines = 4, zmanual = FALSE,
-  out.prefix = "Result",
+  OutPrefix = "Result",
   coord.sys = "+proj=utm +zone=32 +ellps=GRS80 +units=m +no_defs",
   plot.shapes = FALSE, male.pts = NULL, other.shps = NULL, xlim = NULL,
   ylim = NULL)
@@ -17,7 +17,7 @@ fx.edit.terrain(dem = "dem.tif", nlines = 4, zmanual = FALSE,
 
 \item{zmanual}{TRUE/FALSE determines whether elevations fro start end endpoints to the editing lines are enteered manually or read from the terrain}
 
-\item{out.prefix}{a prefix for the output filenames}
+\item{OutPrefix}{a prefix for the output filenames}
 }
 \value{
 A list with elements: (1) Drawn interpolation lines and (2) bounding polygon polys.df and (3) Edited terrain model dem
@@ -26,7 +26,7 @@ A list with elements: (1) Drawn interpolation lines and (2) bounding polygon pol
 Function to edit a DEM(depends on other functions above)
 }
 \examples{
-fx.edit.terrain("dem.tif",nlines=4,zmanual=F,out.prefix="Result")
+fx.edit.terrain("dem.tif",nlines=4,zmanual=F,OutPrefix="Result")
 }
 \author{
 Emmanuel Jjunju, \email{ejjunju@gmail.com}
