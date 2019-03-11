@@ -1,36 +1,3 @@
-# #instructions to make package
-#http://kbroman.org/pkg_primer/pages/build.html
-# install.packages("devtools")
-# library("devtools")#......1
-# devtools::install_github("klutometis/roxygen")
-# library(roxygen2)#......2
-# #Step 1: Create your package directory
-# setwd("C:/Users/noemma/Dropbox/DEV/R/SlopingLines2Raster")
-# create("EditTerrainJE")
-# #Step 2: Add functions in R folder
-# #Step 3: Add documentation
-# #Step 4: Process your documentation
-# setwd("./EditTerrainJE")
-# document()
-# build() #create the .tar.gz file.
-# #Step 5: Install!
-# setwd("..")
-# install("EditTerrainJE")
-#(Bonus) Step 6: Make the package a GitHub repo
-# install_github('EditTerrainJE','ejjunju')
-#install from github
-#devtools install_github()
-
-#connect with github
-#https://cfss.uchicago.edu/git05.html
-#https://github.com/ejjunju/EditTerrainJE
-#ejj-Bm311!
-
-#Rstudio Tools shell
-#git remote add origin https://github.com/ejjunju/EditTerrainJE
-#git pull origin master
-#git push -u origin master
-
 #Interactively edit terrain. Perform cuts and fills in terrain using lines with start and end elevations
 #library(tcltk2)
 #----------------------------------------------------------------------------------------------------------------------#
@@ -1064,6 +1031,7 @@ raster2x11<-function(r,H=20,n=1,xlim=NULL,ylim=NULL){
 #' @export
 ui<-function(){
   #rm(list=ls(),envir = .GlobalEnv )
+  CheckInstallLoadPkgs("tcltk2")
   graphics.off()
   OutPrefix<-tk.1.string("Name of Output sub-directory\n[Also used as prefix for output filename]")
   #Run Interactive edit
@@ -1161,4 +1129,53 @@ tk.n.elv <- function(msg="Enter Line Numbers from left to Right",n=2){
   return(out)
 
 }
+
+#----------------------------------------------------------------------------------------------------------------------#
+#' Create Example project
+#' @author Emmanuel Jjunju, \email{ejjunju@@gmail.com}
+#' @export
+example.project<-function(){
+  library(tcltk2)
+  wd<-tk_choose.dir(default = getwd(), caption = "Select Parent Directory")
+  setwd(wd)
+  CheckInstallLoadPkgs(c("raster","rgdal"))
+  data("POINTS_Z")
+  data("River")
+  data("Terrain")
+  if(!dir.exists("Example")){dir.create("Example")}
+  #setwd("Example")
+  writeRaster(x = Terrain,filename = "Example/Terrain.tif",format="GTiff",NAflag=-9999,overwrite=TRUE)
+  writeOGR(POINTS_Z,dsn = "Example",layer = "POINTS_Z",driver = "ESRI Shapefile",overwrite_layer = TRUE)
+  writeOGR(River,dsn = "Example",layer = "River",driver = "ESRI Shapefile",overwrite_layer = TRUE)
+  setwd("Example")
+}
+
+#----------------------------------------------------------------------------------------------------------------------#
+#datasets
+#' Terrain data example
+#' @format A raster dataset with elevatiopms:
+#' \describe{
+#'   \item{Terrain}{mas}
+#' }
+#' @source \url{hoydedata.no}
+"Terrain"
+#----------------------------------------------------------------------------------------------------------------------#
+#datasets
+#' Terrain data example
+#' @format a point shapefile withe elevations:
+#' \describe{
+#'   \item{POINTS_Z}{Attribute withy heigh (masl)}
+#' }
+"POINTS_Z"
+#----------------------------------------------------------------------------------------------------------------------#
+#datasets
+#' Terrain data example
+#' @format A shapefile showing the river banks:
+#' \describe{
+#'   \item{Shapefile}{Polygon or Lines}
+#' }
+#' @source \url{hoydedata.no}
+"River"
+#----------------------------------------------------------------------------------------------------------------------#
+
 

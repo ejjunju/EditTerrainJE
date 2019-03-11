@@ -38,3 +38,6 @@ ui()
 
 STEPS 5-7 are the only ones needed after the initial install
 
+Updating to neweste version (e.g. EditTerrainJE_0.1.1.tar.gz)
+remove.packages("EditterrainJE")
+install.packages("EditTerrainJE_0.1.1.tar.gz", repos = NULL, type="source",dependencies = TRUE)

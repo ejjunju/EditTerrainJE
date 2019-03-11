@@ -1,10 +1,3 @@
-#Save the file EditTerrainJE_0.1.0.tar.gz
-#make folder with EditTerrainJE_0.1.0.tar.gz into the current directory
-install.packages("../EditTerrainJE_0.1.0.tar.gz", repos = NULL, type="source",dependencies = TRUE)
-library(EditTerrainJE)
-ui()
-
-
 # #instructions to make package
 #http://kbroman.org/pkg_primer/pages/build.html
 # install.packages("devtools")
@@ -27,7 +20,34 @@ ui()
 # install_github('EditTerrainJE','ejjunju')
 #install from github
 #devtools install_github()
+library(devtools)
+library(roxygen2)
+document()
+build()
+remove.packages("EditTerrainJE")
+install.packages("../EditTerrainJE_0.1.1.tar.gz", repos = NULL, type="source",dependencies = TRUE)
 
+#OR
+#install from git_hub
+#Ensures that antivirus doesnt stop installation of packages
+#trace(utils:::unpackPkgZip, quote(Sys.sleep(5)),at = which(grepl("Sys.sleep", body(utils:::unpackPkgZip), fixed = TRUE)))
+#installs EditTerrainJE from github
+#Noneed to run this everytime
+#install_github('EditTerrainJE','ejjunju',force=TRUE) #force=TRUE ensures yiu have the lates version
+
+#loads package
+library(EditTerrainJE)
+
+#OR
+#if you dont want to use the package
+#source('./EditTerrainJE/R/EditTerrainJEFunctions.R')
+
+#Runs user interface
+example.project()
+ui()
+
+#GITHIB
+#connect package to git
 #connect with github
 #https://cfss.uchicago.edu/git05.html
 #https://github.com/ejjunju/EditTerrainJE
@@ -37,13 +57,9 @@ ui()
 #git remote add origin https://github.com/ejjunju/EditTerrainJE
 #git pull origin master
 #git push -u origin master
-
-
-#push to git
-https://github.com/ejjunju/EditTerrainJE
-#https://help.github.com/en/articles/setting-your-commit-email-address-in-git
-$ git config --global user.name ejjunju
-$ git config --global user.email "ejjunju@gmail.com"
-$ git config --global user.email
-commit
-push
+#update git
+# $ git config --global user.name "ejjunju"
+# git config --global user.name
+# $ git config --global user.email "ejjunju@gmail.com"
+# $ git config --global user.email
+#Then push

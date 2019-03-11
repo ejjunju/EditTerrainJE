@@ -2,6 +2,7 @@
 
 export(CheckInstallLoadPkgs)
 export(Interactive_terrain_edit)
+export(example.project)
 export(fx.brks)
 export(fx.edit.terrain)
 export(hills)
