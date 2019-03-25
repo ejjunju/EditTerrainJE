@@ -6,8 +6,8 @@
 Find the elavtion of points by interpolating between the elevations of the start and endpoints if \code{interpZ==TRUE}
 Create a raster by interpolating the elevations}
 \usage{
-sample.line.inkl.start.end.make.dem(x, sdist = 1, interp.z = TRUE, spdf,
-  zmanual = FALSE)
+sample.line.inkl.start.end.make.dem(x, sdist = 1, interp.z = TRUE,
+  spdf, zmanual = FALSE)
 }
 \arguments{
 \item{x}{A SpatialLinesDataFrame (must have a projection in metres), Lines along which points are created. Must have data with first column (ID) second column (Zs) and third column (Ze) . Zs and Ze are start and end elevations for each line (ID).}
@@ -31,4 +31,3 @@ Create a raster by interpolating the elevations
 \author{
 Emmanuel Jjunju, \email{ejjunju@gmail.com}
 }
-

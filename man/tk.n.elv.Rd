@@ -20,4 +20,3 @@ Return n number of values entered using a tk dialog box
 \author{
 Emmanuel Jjunju, \email{ejjunju@gmail.com}
 }
-

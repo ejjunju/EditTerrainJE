@@ -7,8 +7,8 @@
 fx.edit.terrain(dem = "dem.tif", nlines = 4, zmanual = FALSE,
   OutPrefix = "Result",
   coord.sys = "+proj=utm +zone=32 +ellps=GRS80 +units=m +no_defs",
-  plot.shapes = FALSE, male.pts = NULL, other.shps = NULL, xlim = NULL,
-  ylim = NULL)
+  plot.shapes = FALSE, male.pts = NULL, other.shps = NULL,
+  xlim = NULL, ylim = NULL)
 }
 \arguments{
 \item{dem}{Path to a raster withe levation data (tif).}
@@ -31,4 +31,3 @@ fx.edit.terrain("dem.tif",nlines=4,zmanual=F,OutPrefix="Result")
 \author{
 Emmanuel Jjunju, \email{ejjunju@gmail.com}
 }
-

@@ -5,8 +5,8 @@
 #' @param x vector of packages to check and install
 #' @author Emmanuel Jjunju, \email{ejjunju@@gmail.com}
 #' @export
-CheckInstallLoadPkgs = Vectorize(function(x) {
-  #Ensure antivirus doesnt stop mising package installation (included in #CheckInstallLoadPkgs)
+fx.CheckInstallLoadPkgs = Vectorize(function(x) {
+  #Ensure antivirus doesnt stop mising package installation (included in #fx.CheckInstallLoadPkgs)
   #interactive alternative #trace(utils:::unpackPkgZip, edit=TRUE)
   trace(utils:::unpackPkgZip, quote(Sys.sleep(5)),at = which(grepl("Sys.sleep", body(utils:::unpackPkgZip), fixed = TRUE)))
   #check and install
@@ -24,7 +24,7 @@ CheckInstallLoadPkgs = Vectorize(function(x) {
 #' @export
 polygonFromXY<-function(pts=null,Raster=null,n=4,coord.sys="+proj=utm +zone=33 +ellps=WGS84 +datum=WGS84 +units=m +no_defs "){
   if(!is.null(Raster)){
-    pts<-click(Raster,n=n,xy=TRUE)
+    pts<-fx.click(Raster,n=n,xy=TRUE)
     pts<-pts[,1:2]
     pts<-rbind(pts,pts[1,])
     points(pts)
@@ -42,6 +42,27 @@ polygonFromXY<-function(pts=null,Raster=null,n=4,coord.sys="+proj=utm +zone=33 +
   } else{print("No points to create polygon")}
 }
 
+#' Draw Polygon by cklicking in a plotted Raster
+#' @param r raster
+#' @param clicks number of clicks
+#' @return shp
+#' @author Emmanuel Jjunju, \email{ejjunju@@gmail.com}
+#' @export
+fx.PolygonFromRasterClicks<-function(r,clicks=100){
+  hills(r,main="Click in this map: wait for message Box")
+  tk_messageBox(type="ok",message="Click to draw Mask polygon?")
+  cp<-fx.click(r,n=clicks)
+  cp<-cp[,-3]
+  srl<-list(Polygon(cp))
+  Srl<-list(Polygons(srl, ID=1))
+  Sr<-SpatialPolygons(Srl,proj4string=CRS(proj4string(r)))
+  shp<-SpatialPolygonsDataFrame(Sr, data=data.frame(ID=1), match.ID = TRUE)
+  plot(shp,add=T,col=rgb(0.55,0.55,0.55,alpha=0.5))
+  return(shp)
+}
+
+
+
 #----------------------------------------------------------------------------------------------------------------------#
 #' Function for drawing points at a given interval along a line
 #' @param x A SpatialLinesDataFrame (must have a projection in metres)
@@ -51,8 +72,8 @@ polygonFromXY<-function(pts=null,Raster=null,n=4,coord.sys="+proj=utm +zone=33 +
 #' @export
 sample.line <- function(x, sdist=100)
 {
-  ##CheckInstallLoadPkgs("sp")
-  #CheckInstallLoadPkgs(c("rgdal","raster","sp","tcltk2","akima","compiler"))
+  ##fx.CheckInstallLoadPkgs("sp")
+  #fx.CheckInstallLoadPkgs(c("rgdal","raster","sp","tcltk2","akima","compiler"))
   #if (!require(sp)) stop("sp PACKAGE MISSING")
   if (!inherits(x, "SpatialLinesDataFrame")) stop("MUST BE SP SpatialLinesDataFrame OBJECT")
   lgth <- SpatialLinesLengths(x)
@@ -96,7 +117,7 @@ sample.line.inkl.start.end.make.dem <- function(x,
                                                 zmanual=FALSE
 ){
   EditingLines<-x
-  #CheckInstallLoadPkgs(c("rgdal","raster","sp","tcltk2","akima","compiler"))
+  #fx.CheckInstallLoadPkgs(c("rgdal","raster","sp","tcltk2","akima","compiler"))
   #if (!require(sp)) stop("sp PACKAGE MISSING")
   if (!inherits(x, "SpatialLinesDataFrame")) stop("MUST BE SP SpatialLinesDataFrame OBJECT")
   lgth <- SpatialLinesLengths(x)
@@ -217,7 +238,7 @@ sample.line.inkl.start.end.make.dem <- function(x,
 #' @author Emmanuel Jjunju, \email{ejjunju@@gmail.com}
 #' @export
 hills<-function(r,xlim=NULL,ylim=NULL,main="Terreng",legend=TRUE,brks=NA){
-  #CheckInstallLoadPkgs(c("rgdal","raster","sp","tcltk2","akima","compiler"))
+  #fx.CheckInstallLoadPkgs(c("rgdal","raster","sp","tcltk2","akima","compiler"))
   par(mar=c(9,2,2,1))
   slope <- terrain(r, opt='slope')
   aspect <- terrain(r, opt='aspect')
@@ -277,7 +298,7 @@ fx.brks<-function(r,n=32){
 #' @author Emmanuel Jjunju, \email{ejjunju@@gmail.com}
 #' @export
 hills.legend<-function(r,xlim=NULL,ylim=NULL,brks=NA){
-  #CheckInstallLoadPkgs(c("rgdal","raster","sp","tcltk2","akima","compiler"))
+  #fx.CheckInstallLoadPkgs(c("rgdal","raster","sp","tcltk2","akima","compiler"))
   if(is.na(brks)[1]){
     rng<-range(getValues(r),na.rm=T)
     (brks<-seq(rng[1],rng[2],diff(rng)/32))
@@ -312,7 +333,7 @@ hills.legend<-function(r,xlim=NULL,ylim=NULL,brks=NA){
 #' @author Emmanuel Jjunju, \email{ejjunju@@gmail.com}
 #' @export
 tk.1.value <- function(msg="Enter number of Parallel Interpolation Lines (minimum 2)",varname="Number of Lines to Draw"){
-  #CheckInstallLoadPkgs(c("rgdal","raster","sp","tcltk2","akima","compiler"))
+  #fx.CheckInstallLoadPkgs(c("rgdal","raster","sp","tcltk2","akima","compiler"))
   xvar <- tclVar("")
 
   win1 <- tktoplevel()
@@ -350,7 +371,7 @@ tk.1.value <- function(msg="Enter number of Parallel Interpolation Lines (minimu
 #' @author Emmanuel Jjunju, \email{ejjunju@@gmail.com}
 #' @export
 tk.1.string <- function(msg="Output Prefix",varname="OutPrefix"){
-  #CheckInstallLoadPkgs(c("rgdal","raster","sp","tcltk2","akima","compiler"))
+  #fx.CheckInstallLoadPkgs(c("rgdal","raster","sp","tcltk2","akima","compiler"))
   xvar <- tclVar("Result")
 
   win1 <- tktoplevel()
@@ -388,7 +409,7 @@ tk.1.string <- function(msg="Output Prefix",varname="OutPrefix"){
 #' @author Emmanuel Jjunju, \email{ejjunju@@gmail.com}
 #' @export
 tk.2.values <- function(msg="Enter Start and End Elevations for current Line",varname=c("Start","end")){
-  #CheckInstallLoadPkgs(c("rgdal","raster","sp","tcltk2","akima","compiler"))
+  #fx.CheckInstallLoadPkgs(c("rgdal","raster","sp","tcltk2","akima","compiler"))
   xvar <- tclVar("")
   yvar <- tclVar("")
 
@@ -435,7 +456,7 @@ tk.n.values <- function(msg="Enter Line Numbers from left to Right",n=2){
   require(tcltk2)
   varname<-paste("Line",1:n,sep="")
   quotes<-""
-  #CheckInstallLoadPkgs(c("rgdal","raster","sp","tcltk2","akima","compiler"))
+  #fx.CheckInstallLoadPkgs(c("rgdal","raster","sp","tcltk2","akima","compiler"))
   #xvar <- tclVar("")
   xvar.txt<-paste("xvar",1:n,"<-tclVar(quotes)",sep="")
   eval(parse(text=xvar.txt))
@@ -503,7 +524,7 @@ fx.edit.terrain<-function(dem="dem.tif",
                           ylim=NULL){
 
 
-  CheckInstallLoadPkgs(c("rgdal","raster","sp","tcltk2","akima","compiler"))
+  fx.CheckInstallLoadPkgs(c("rgdal","raster","sp","tcltk2","akima","compiler"))
   #channel i based on the elevations i the raster at the start and end points of lines
   options(warn=0)
   #graphics.off()
@@ -572,13 +593,13 @@ fx.edit.terrain<-function(dem="dem.tif",
   print("Create Interpolation Guide Lines by clicking on the plot the click FINISH when done")
   print("-------------------------------------------------------------------------------------------------------------")
   #tkmessageBox(message = "Create Cut or Fill Line by clicking\n (maks 100 clicks per line)", icon = "info", type = "ok")
-  CheckInstallLoadPkgs("sp")
+  fx.CheckInstallLoadPkgs("sp")
   ll<-vector("list",length = nlines)
   zse<-array(dim=c(nlines,2)) #start end elevations
   for(i in 1:nlines){
     if(i==1){print(tkmessageBox(message = paste("Create Editing Lines\nClick to create vertices (Max 100/Line)\nFirst Line ",min(i,nlines),"/",nlines),
                                     icon = "info", type = "ok"))}
-    p1<-click(r,n=100,xy=TRUE)
+    p1<-fx.click(r,n=100,xy=TRUE,PolyLine = TRUE)
     l1<-as.matrix(p1[,-3])
     lines(p1$x,p1$y,pch=16,lty=1,col=rgb(1,0,0,alpha=0.5),lwd=3) #red lines that are from clicking
     ll[[i]]<-l1
@@ -612,7 +633,7 @@ fx.edit.terrain<-function(dem="dem.tif",
                                   function(y) slot(y, "coords"))) #Line vertices
 
   #(Midvert<-do.call("rbind",lapply(lapply(lxy, function(x) x[[1]]),function(x) x[ceiling(nrow(x)/2),])))
-  CheckInstallLoadPkgs("maptools")
+  fx.CheckInstallLoadPkgs("maptools")
   (MidPts<-coordinates(SpatialLinesMidPoints(EditingLines)))
 
   ab<-NA #startpoints
@@ -1031,7 +1052,7 @@ raster2x11<-function(r,H=20,n=1,xlim=NULL,ylim=NULL){
 #' @export
 ui<-function(){
   #rm(list=ls(),envir = .GlobalEnv )
-  CheckInstallLoadPkgs("tcltk2")
+  fx.CheckInstallLoadPkgs("tcltk2")
   graphics.off()
   OutPrefix<-tk.1.string("Name of Output sub-directory\n[Also used as prefix for output filename]")
   #Run Interactive edit
@@ -1085,7 +1106,7 @@ tk.n.elv <- function(msg="Enter Line Numbers from left to Right",n=2){
   require(tcltk2)
   varname<-paste("Elevation",1:n,sep="")
   quotes<-""
-  #CheckInstallLoadPkgs(c("rgdal","raster","sp","tcltk2","akima","compiler"))
+  #fx.CheckInstallLoadPkgs(c("rgdal","raster","sp","tcltk2","akima","compiler"))
   #xvar <- tclVar("")
   xvar.txt<-paste("xvar",1:n,"<-tclVar(quotes)",sep="")
   eval(parse(text=xvar.txt))
@@ -1131,6 +1152,56 @@ tk.n.elv <- function(msg="Enter Line Numbers from left to Right",n=2){
 }
 
 #----------------------------------------------------------------------------------------------------------------------#
+#'prompts user to Enter strings and returns them to the variable
+#'
+#' @param msg message
+#' @param n number of values
+#' @param Varnames variable names
+#'
+#' @return out
+#' @export
+#'
+tk.n.strings<-function (msg = "Enter Values", n = 2,Varnames=NULL)
+{
+  if(is.null(Varnames)){Varnames<- LETTERS[1:n]}
+  require(tcltk2)
+  varname <- paste(Varnames, 1:n, sep = "")
+  quotes <- ""
+  xvar.txt <- paste("xvar", 1:n, "<-tclVar(quotes)", sep = "")
+  eval(parse(text = xvar.txt))
+  win1 <- tktoplevel()
+  tkwm.title(win1, "Variables")
+  x.entry.txt <- paste("x.entry", 1:n, " <- tk2entry(win1, width = as.character(25),textvariable=xvar",
+                       1:n, ")", sep = "")
+  eval(parse(text = x.entry.txt))
+  reset <- function() {
+    txt <- paste("tclvalue(xvar,", 1:n, ")<-quotes", sep = "")
+    eval(parse(text = txt))
+  }
+  reset.but <- tkbutton(win1, text = "Reset", command = reset)
+  submit <- function() {
+    (txt1 <- paste("x", 1:n, "<- as.character(tclvalue(xvar",
+                   1:n, "))", sep = ""))
+    eval(parse(text = txt1))
+    e <- parent.env(environment())
+    txt2 <- paste("e$x", 1:n, " <- x", 1:n, sep = "")
+    eval(parse(text = txt2))
+    tkdestroy(win1)
+  }
+  submit.but <- tkbutton(win1, text = "OK", command = submit)
+  tkgrid(tklabel(win1, text = msg), columnspan = 2)
+  txt3 <- paste("tkgrid(tklabel(win1,text=varname[", 1:n, "]), x.entry",
+                1:n, ",pady = 10, padx =10)", sep = "")
+  eval(parse(text = txt3))
+  tkgrid(submit.but, reset.but)
+  tkwait.window(win1)
+  txtout <- paste("out<-c(", paste(paste("x", 1:n, sep = ""),
+                                   collapse = ","), ")", sep = "")
+  (eval(parse(text = txtout)))
+  return(out)
+}
+
+#----------------------------------------------------------------------------------------------------------------------#
 #' Create Example project
 #' @author Emmanuel Jjunju, \email{ejjunju@@gmail.com}
 #' @export
@@ -1138,13 +1209,13 @@ example.project<-function(){
   library(tcltk2)
   wd<-tk_choose.dir(default = getwd(), caption = "Select Parent Directory")
   setwd(wd)
-  CheckInstallLoadPkgs(c("raster","rgdal"))
+  fx.CheckInstallLoadPkgs(c("raster","rgdal"))
   data("POINTS_Z")
   data("River")
   data("Terrain")
   if(!dir.exists("Example")){dir.create("Example")}
-  #setwd("Example")
-  writeRaster(x = Terrain,filename = "Example/Terrain.tif",format="GTiff",NAflag=-9999,overwrite=TRUE)
+  setwd("Example")
+  writeRaster(x = Terrain,filename = "Terrain.tif",format="GTiff",NAflag=-9999,overwrite=TRUE)
   writeOGR(POINTS_Z,dsn = "Example",layer = "POINTS_Z",driver = "ESRI Shapefile",overwrite_layer = TRUE)
   writeOGR(River,dsn = "Example",layer = "River",driver = "ESRI Shapefile",overwrite_layer = TRUE)
   setwd("Example")
@@ -1178,4 +1249,224 @@ example.project<-function(){
 "River"
 #----------------------------------------------------------------------------------------------------------------------#
 
+#Functions related to Elevation colume curve and hypsometric curve
+#require(EditTerrainJE)
+#' Round and add trailing zeros
+#' @param x Number to round and add trailing
+#' @param n Number of decimal points
+#' @return x
+#' @export
+#' @author Emmanuel Jjunju, \email{ejjunju@@gmail.com}
+#' @examples
+#' fx.trail(20,5)
+fx.trail<-function(x,n=2){
+  txt<-paste("%.",n,"f",sep="")
+  x<-sprintf(txt, round(x,n))
+  return(x)
+}
+
+#'Click and plot clicked points while still clicking
+#' @param r raster
+#' @param n number of clicks
+#' @return cp
+#' @export
+#' @author Emmanuel Jjunju, \email{ejjunju@@gmail.com}
+fx.click<-function(r,n=100,xy=TRUE,PolyLine=FALSE){
+  clicks<-n
+  i<-1
+  cp<-NA
+  while(i<clicks){
+    cpi<-click(r,n=1,xy=xy)
+    if(i==1){cp<-cpi} else{cp<-rbind(cp,cpi)}
+    points(cp,pch=16,col=2)
+    lines(cp,lty=2)
+    Sys.sleep(2)
+    yn1<-tk_messageBox(type="yesno",message="Next Point?")
+    if(yn1=="yes"){i<-i+1} else {
+      i<-clicks
+      if(PolyLine==FALSE){cp<-rbind(cp,cp[1,])}
+      points(cp,pch=16,col=2);lines(cp,lty=2)
+    }
+  }
+  return(cp)
+}
+
+#' Draw Polygon by cklicking in a plotted Raster
+#' @param r raster
+#' @param clicks number of clicks
+#' @return shp
+#' @export
+#' @author Emmanuel Jjunju, \email{ejjunju@@gmail.com}
+fx.PolygonFromRasterClicks<-function(r,clicks=100){
+  hills(r,main="Click in this map: wait for message Box")
+  tk_messageBox(type="ok",message="Click to draw Mask polygon?")
+  cp<-fx.click(r,n=clicks)
+  cp<-cp[,-3]
+  srl<-list(Polygon(cp))
+  Srl<-list(Polygons(srl, ID=1))
+  Sr<-SpatialPolygons(Srl,proj4string=CRS(proj4string(r)))
+  shp<-SpatialPolygonsDataFrame(Sr, data=data.frame(ID=1), match.ID = TRUE)
+  plot(shp,add=T,col=rgb(0.55,0.55,0.55,alpha=0.5))
+  return(shp)
+}
+
+#' Extract by mask
+#' @param r raster
+#' @param clicks number of clicks to make a mask polygon (maks 100)
+#' @return out
+#' @export
+#' @author Emmanuel Jjunju, \email{ejjunju@@gmail.com}
+fx.ExtractByMask<-function(r,clicks=100){
+  yn<-tk_messageBox(type="yesno",message="Do you have a Mask polygon?")
+  if(yn=="no"){
+    #Draw a polygon
+    shp<-fx.PolygonFromRasterClicks(r,clicks = clicks)
+  } else {
+    #Choose an exisiting polygon
+    Filters <- matrix(c("Shapefiles", ".shp"),1, 2, byrow = TRUE)
+    f1<-tk_choose.files(default = "",
+                        caption = "Reservoir boundary",
+                        multi = TRUE,
+                        filters = Filters,
+                        index = 1)
+    (brkpaths1<-do.call(rbind, strsplit(f1,"/")))
+    (brkpaths1<-matrix(brkpaths1[,-ncol(brkpaths1)],nrow=1))
+    (adsn1<-apply(brkpaths1,1,function(x) paste(x,collapse="/")))
+    f1<-do.call(rbind, strsplit(f1,"\\."))[,1]
+    f1<-unlist(strsplit(f1,"/"))
+    f1<-f1[length(f1)]
+    shp<-readOGR(adsn1,f1)
+    shp<-spTransform(shp,CRS(proj4string(r)))
+    plot(shp,add=T,col=rgb(0.55,0.55,0.55,alpha=0.5))
+  }
+
+  r<-crop(r,shp)
+  shpr<-rasterize(shp,r);shpr<-shpr/shpr
+  r<-r*shpr
+  writeOGR(shp,".","Mask",driver = "ESRI Shapefile",overwrite_layer = TRUE)
+  out<-list(shp=shp,shpr=shpr,r=r)
+  return(out)
+}
+
+#' Plots volume-elevation curve and hypsographic curve
+#'
+#' @param zlim height limits over which to compute volume curve
+#' @param clip2shp TRUE/FALSE decides if raster is to be clippd to a shapefile
+#' @param change.dir  Change working directory to directy containing raster
+#' @param zones  Number of elevation zones for curves
+#' @export
+#' @author Emmanuel Jjunju, \email{ejjunju@@gmail.com}
+fx.Terrain2Curves<-function(
+  zlim=NULL,
+  clip2shp=TRUE,
+  zones=10,
+  change.dir=TRUE
+){
+  fx.CheckInstallLoadPkgs("audio")
+  #Terrain.....................................................................
+  fx.CheckInstallLoadPkgs(c("raster","fields","plotrix","tcltk2","rgdal"))
+  Filters <- matrix(c("Raster", ".tif"),1, 2, byrow = TRUE)
+  dem<-tk_choose.files(default = "",
+                       caption = "Reservoir raster",
+                       multi = FALSE,
+                       filters = Filters,
+                       index = 1)
+  r <- raster(dem) # read the raster
+  dir<-unlist(strsplit(dem,"/"))
+  dir<-paste(dir[-length(dir)],collapse = "/")
+  if(change.dir==TRUE){setwd(dir)}
+
+  if(is.null(zlim)){#retain onklyvakues within a given range
+    zlim=range(r[],na.rm=T)
+    #hills(r,main=paste("Range",paste(round(zlim,2),collapse="-")))
+  } else {
+    r[r<zlim[1]]<-NA
+    r[r>zlim[2]]<-NA
+    #hills(r,main=paste("Range",paste(round(zlim,2),collapse="-")))
+  }
+
+  graphics.off()
+  par(mfrow=c(1,2))
+  hills(r,main=paste("Elevation| Range = c(",paste(round(zlim,2),collapse="-"),")"))
+
+  #Clip raster to a given shapefile or to draw one............................................
+  if(clip2shp==TRUE){
+    out<-fx.ExtractByMask(r,clicks=100)
+    r<-out$r
+  }
+  #hypsographic curve based on percentiles.....................................................
+  b<-na.omit(getValues(r)) #get all raster values
+  b<-sort(b) #sort them from lowest to highest
+  P=seq(0,100,100/zones[1]) #Create percentiles for a hypdographic curve
+  H<-quantile(b,na.rm=T,probs=P/100)#Create quantiles
+
+  ##hypsographic curve based on Real Area.....................................................
+  bi<-ceiling(seq(0,length(b),length(b)/10))
+  Hi<-H
+  Hi[]<-c(b[1],b[bi])
+  (hypso<-data.frame(P,H,Hi))
+  hypso$Zmean<-NA
+  for(i in 2:(length(Hi))){
+    hypso$Zmean[i]<- mean(b[(bi[i-1]+1):(bi[i])])
+  }
+  hypso[,-1]<-apply(hypso[,-1],2,function(x) fx.trail(x,2))
+  print(hypso)
+  #Map of Elevation Zones Zones................................................................
+  (m<-Hi)
+  (m<-cbind(m[-length(m)],m[-1]))
+  (m<-cbind(m,1:nrow(m)))
+  (rc <- reclassify(r, m,include.lowest=T)) #slow
+  par(mfrow=c(2,2))
+  hills(r,main="Elevation")
+  box("figure",lwd=1,col=rgb(0,0,1,alpha = 0.5))
+  #hills(rc,brks=P/10,main="Elevation Zones")
+
+
+  hills(r,brks=unique(Hi),main="Elevation Zones")
+  box("figure",lwd=1,col=rgb(0,0,1,alpha = 0.5))
+
+  print(RES<-table(rc[]))
+  cellarea<-prod(res(r))
+  Area<-cumsum(RES*cellarea)
+
+  par(mar=c(5,5,5,5))
+  plot(hypso$P,as.numeric(hypso$H),pch=16,axes=F,main="Hypsographic curve")
+  lines(hypso$P,as.numeric(hypso$Hi),col=2)
+  axis(1,P,P,cex=0.5)
+  axis(2,round(H,0),round(H,0),las=2,cex=0.5)
+  abline(h=H,lty=1,col="grey")
+  abline(v=P,lty=1,col="grey")
+  grid()
+  box()
+  #plot(1:10,xlim=c(1,0),ylim=c(1,10),pch="",axes=F,ylab="",xlab="")
+  addtable2plot(30, Hi[1], hypso, bty = "o", display.rownames = F, hlines = TRUE,
+                vlines = TRUE,xpad=1,ypad=0.3)
+  box("figure",lwd=1,col=rgb(0,0,1,alpha = 0.5))
+  write.table(hypso,"hypsocurve",col.names = F)
+
+  #Elevation Volume curve.........................................................................
+  P2=seq(0,100,100/zones[1]) #Create percentiles for a E/V curve
+  b2<-quantile(b,na.rm=T,probs=P2/100)#Create quantiles
+  Kurve<-as.data.frame(array(dim=c(length(b2),2)))
+  names(Kurve)<-c("Vol1000m3","H")
+  Kurve$H<-b2
+  Kurve$Vol1000m3[1]<-0
+  for(i in 2:length(b2)){
+    bs<-b[which(b<=b2[i])]
+    DH<-b2[i]-bs
+    Kurve$Vol1000m3[i]<-sum(DH*cellarea)/1000
+  }
+  write.table(Kurve,"rescurve.txt",col.names = F)
+  #hills(r,brks=unique(b2))#col=rainbow(length(b2)-1))#,col=tim.colors(length(b1)-1))
+  plot(Kurve,type="o",col=2,pch=16,main="Elevation - Volume Curve")
+  grid()
+  Kurve2<-apply(Kurve,2,function(x) fx.trail(x,2))
+  addtable2plot(Kurve$Vol1000m3[ceiling(0.6*zones[1])], min(Kurve$H), Kurve2, bty = "o", display.rownames = F, hlines = TRUE,
+                vlines = TRUE,xpad=1,ypad=0.3)
+  box("figure",lwd=1,col=rgb(0,0,1,alpha = 0.5))
+
+  box("outer",lwd=3,col="blue")
+
+
+}
 

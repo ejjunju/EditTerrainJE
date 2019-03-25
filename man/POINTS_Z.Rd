@@ -15,4 +15,3 @@ POINTS_Z
 Terrain data example
 }
 \keyword{datasets}
-

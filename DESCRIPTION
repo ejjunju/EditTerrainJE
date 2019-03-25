@@ -1,11 +1,11 @@
 Package: EditTerrainJE
 Type: Package
-Title:Interactively Edit Terrain
-Version: 0.1.0
+Title: Interactively Edit Terrain
+Version: 0.1.2
 Author: Emmanuel Jjunju
 Maintainer: The package maintainer <ejjuju@gmail.com>
 Description: Interactively edit terrain. Perform cuts and fills in terrain using lines with start and end elevations
 License: GNU General Public License (GPL)
 Encoding: UTF-8
 LazyData: true
-RoxygenNote: 5.0.1
+RoxygenNote: 6.1.1

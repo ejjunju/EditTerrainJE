@@ -19,4 +19,3 @@ Function to call x11 with H and W based on a raster's dimensions
 \author{
 Emmanuel Jjunju, \email{ejjunju@gmail.com}
 }
-

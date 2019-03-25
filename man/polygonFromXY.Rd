@@ -19,4 +19,3 @@ Function to create a SpatialPolygonsDataFrame from a matrix of xy coordinates
 \author{
 Emmanuel Jjunju, \email{ejjunju@gmail.com}
 }
-

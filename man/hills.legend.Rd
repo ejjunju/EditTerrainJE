@@ -21,4 +21,3 @@ Plot a legend
 \author{
 Emmanuel Jjunju, \email{ejjunju@gmail.com}
 }
-

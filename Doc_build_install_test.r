@@ -25,7 +25,7 @@ library(roxygen2)
 document()
 build()
 remove.packages("EditTerrainJE")
-install.packages("../EditTerrainJE_0.1.1.tar.gz", repos = NULL, type="source",dependencies = TRUE)
+install.packages("../EditTerrainJE_0.1.2.tar.gz", repos = NULL, type="source",dependencies = TRUE)
 
 #OR
 #install from git_hub
@@ -44,7 +44,9 @@ library(EditTerrainJE)
 
 #Runs user interface
 example.project()
-ui()
+ui() #edit terrain
+
+
 
 #GITHIB
 #connect package to git
@@ -58,8 +60,9 @@ ui()
 #git pull origin master
 #git push -u origin master
 #update git
-# $ git config --global user.name "ejjunju"
+# $ git config --global user.name ejjunju
 # git config --global user.name
-# $ git config --global user.email "ejjunju@gmail.com"
+# $ git config --global user.email ejjunju@gmail.com
 # $ git config --global user.email
+#Then commit
 #Then push

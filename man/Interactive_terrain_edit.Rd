@@ -33,4 +33,3 @@ Interactive_terrain_edit()
 \author{
 Emmanuel Jjunju, \email{ejjunju@gmail.com}
 }
-

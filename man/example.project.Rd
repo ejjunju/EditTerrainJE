@@ -12,4 +12,3 @@ Create Example project
 \author{
 Emmanuel Jjunju, \email{ejjunju@gmail.com}
 }
-

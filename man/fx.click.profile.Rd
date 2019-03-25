@@ -15,4 +15,3 @@ table of elevations
 \description{
 Draw an elevation profile line on a raster
 }
-

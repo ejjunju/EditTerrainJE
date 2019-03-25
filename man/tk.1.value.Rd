@@ -4,7 +4,8 @@
 \alias{tk.1.value}
 \title{Return a value entered using a tk dialog box}
 \usage{
-tk.1.value(msg = "Enter number of Parallel Interpolation Lines (minimum 2)",
+
+  tk.1.value(msg = "Enter number of Parallel Interpolation Lines (minimum 2)",
   varname = "Number of Lines to Draw")
 }
 \arguments{
@@ -21,4 +22,3 @@ Return a value entered using a tk dialog box
 \author{
 Emmanuel Jjunju, \email{ejjunju@gmail.com}
 }
-

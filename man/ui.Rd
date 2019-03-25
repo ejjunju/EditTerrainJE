@@ -15,4 +15,3 @@ USER INTERFACE
 \author{
 Emmanuel Jjunju, \email{ejjunju@gmail.com}
 }
-

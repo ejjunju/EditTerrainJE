@@ -20,4 +20,3 @@ get breaks from a raster based on a given number of breaks. default is 32
 \author{
 Emmanuel Jjunju, \email{ejjunju@gmail.com}
 }
-

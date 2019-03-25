@@ -20,4 +20,3 @@ Function for drawing points at a given interval along a line
 \author{
 Emmanuel Jjunju, \email{ejjunju@gmail.com}
 }
-
